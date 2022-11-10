@@ -1,0 +1,13 @@
+node_modules
+out
+neardev
+temp
+
+.env
+.env.config
+.env.secret
+yarn.lock
+src/log
+.idea
+.eslintcache
+.history
