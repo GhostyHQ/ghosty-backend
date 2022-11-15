@@ -5,6 +5,7 @@ temp
 
 .env
 .env.config
+config.env
 .env.secret
 yarn.lock
 src/log
