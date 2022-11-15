@@ -45,11 +45,6 @@ module.exports.putProfile = async (req, res) => {
 
 	const updateProfile = {
 		accountId: req.body.accountId,
-		chatList: [
-			{
-				accountId: req.body.chatList,
-			},
-		],
 	}
 
 	try {
