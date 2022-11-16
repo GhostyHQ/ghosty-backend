@@ -4,6 +4,7 @@ const cors = require('cors')
 
 const databaseConnect = require('./config/database')
 const profileRoute = require('./routes/profileRoute')
+const messageRoute = require('./routes/messageRoute')
 
 const PORT = process.env.PORT || 9090
 
@@ -15,6 +16,7 @@ server.use(cors())
 server.use(express.json())
 server.use(express.urlencoded({ extended: false }))
 server.use('/api', profileRoute)
+server.use('/api', messageRoute)
 
 server.get('/', (req, res) => {
 	res.json({ status: 1 })
