@@ -1,7 +1,7 @@
 const Message = require('../models/messageModel')
 
 module.exports.sendMessage = async (req, res) => {
-	const { senderId, receiverId, message } = req.body
+	const { senderId, receiverId, message, image } = req.body
 
 	try {
 		const insertMessage = await Message.create({
@@ -9,7 +9,7 @@ module.exports.sendMessage = async (req, res) => {
 			receiverId: receiverId,
 			message: {
 				text: message,
-				image: '',
+				image: image,
 			},
 		})
 		res.status(200).json({
