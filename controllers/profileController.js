@@ -2,7 +2,42 @@ const Base64 = require('js-base64').Base64
 const axios = require('axios')
 
 const getConfig = require('../config/near')
+const messageModel = require('../models/messageModel')
 const Profile = require('../models/profileModal')
+
+const getLastMessage = async (currUser, chatList) => {
+	const message = await messageModel
+		.find({
+			$or: [
+				{
+					$and: [
+						{
+							senderId: {
+								$eq: currUser,
+							},
+						},
+						{
+							receiverId: {
+								$eq: chatList,
+							},
+						},
+					],
+				},
+				{
+					$and: [
+						{
+							receiverId: { $eq: currUser },
+						},
+						{ senderId: { $eq: chatList } },
+					],
+				},
+			],
+		})
+		.sort({ updatedAt: -1 })
+		.limit(1)
+
+	return message
+}
 
 module.exports.getProfileList = async (req, res) => {
 	try {
@@ -25,9 +60,45 @@ module.exports.getProfile = async (req, res) => {
 		const profile = await Profile.findOne({
 			accountId: req.query.accountId,
 		})
+
 		res.json({
 			status: 1,
 			data: profile || [],
+		})
+	} catch (error) {
+		console.log(error)
+		res.status(400).json({
+			status: 0,
+			message: error.message || error,
+		})
+	}
+}
+
+module.exports.getChatList = async (req, res) => {
+	let chatListMassage = []
+	try {
+		const profile = await Profile.findOne({
+			accountId: req.query.accountId,
+		})
+		const chatList = profile.chatList
+
+		for (let i = 0; i < chatList.length; i++) {
+			let lastMessage = await getLastMessage(req.query.accountId, chatList[i].accountId)
+			chatListMassage = [
+				...chatListMassage,
+				{
+					_id: profile._id,
+					accountId: req.query.accountId,
+					accountChatList: chatList[i].accountId,
+					alias: chatList[i].alias,
+					lastMessage: lastMessage,
+				},
+			]
+		}
+
+		res.json({
+			status: 1,
+			data: chatListMassage || [],
 		})
 	} catch (error) {
 		console.log(error)

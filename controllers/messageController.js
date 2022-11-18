@@ -29,17 +29,35 @@ module.exports.getMessage = async (req, res) => {
 		try {
 			const currentUser = req.accountId
 			const receiverId = req.params.id
-			const getAllMessage = await Message.find({})
-
-			const currentMessage = getAllMessage.filter(
-				(message) =>
-					(message.senderId === currentUser && message.receiverId === receiverId) ||
-					(message.receiverId === currentUser && message.senderId === receiverId)
-			)
-			console.log(currentMessage)
+			const getAllMessage = await Message.find({
+				$or: [
+					{
+						$and: [
+							{
+								senderId: {
+									$eq: currentUser,
+								},
+							},
+							{
+								receiverId: {
+									$eq: receiverId,
+								},
+							},
+						],
+					},
+					{
+						$and: [
+							{
+								receiverId: { $eq: currentUser },
+							},
+							{ senderId: { $eq: receiverId } },
+						],
+					},
+				],
+			})
 			res.status(200).json({
 				status: 1,
-				data: currentMessage,
+				data: getAllMessage,
 			})
 		} catch (error) {
 			res.status(500).json({
