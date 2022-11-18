@@ -67,3 +67,33 @@ module.exports.getMessage = async (req, res) => {
 		}
 	}
 }
+
+module.exports.seenMessage = async (req, res) => {
+	try {
+		const data = await Message.findOneAndUpdate({ _id: req.body._id }, { $set: { status: 'seen' } })
+		res.json({
+			status: 1,
+			data: data,
+		})
+	} catch (error) {
+		res.status(500).json({
+			status: 0,
+			message: error.message,
+		})
+	}
+}
+
+module.exports.deliveredMessage = async (req, res) => {
+	try {
+		await Message.findOneAndUpdate({ _id: req.body._id }, { $set: { status: 'delivered' } })
+		res.json({
+			status: 1,
+			data: 'Success',
+		})
+	} catch (error) {
+		res.status(500).json({
+			status: 0,
+			message: error.message,
+		})
+	}
+}
