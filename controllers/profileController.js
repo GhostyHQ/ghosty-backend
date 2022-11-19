@@ -209,3 +209,42 @@ module.exports.putChatList = async (req, res) => {
 		})
 	}
 }
+
+module.exports.putNickname = async (req, res) => {
+	const authHeader = req.headers.authorization
+	const decodeAuthHeader = Base64.decode(authHeader)
+	const [userId] = decodeAuthHeader.split('&')
+
+	const currentUser = req.body.accountId
+	const accountUser = req.body.accountUser
+	const alias = req.body.alias
+
+	try {
+		if (userId !== currentUser) {
+			throw new Error('AccountId does not match with authorization token')
+		}
+
+		const data = await Profile.findOneAndUpdate(
+			{ accountId: currentUser, 'chatList.accountId': accountUser },
+			{
+				$set: {
+					'chatList.$.alias': alias,
+				},
+			},
+			{
+				returnDocument: 'after',
+			}
+		)
+
+		res.json({
+			status: 1,
+			data: data,
+		})
+	} catch (error) {
+		console.log(error)
+		res.status(400).json({
+			status: 0,
+			message: error.message,
+		})
+	}
+}
