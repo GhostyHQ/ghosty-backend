@@ -85,10 +85,18 @@ module.exports.seenMessage = async (req, res) => {
 
 module.exports.deliveredMessage = async (req, res) => {
 	try {
-		await Message.findOneAndUpdate({ _id: req.body._id }, { $set: { status: 'delivered' } })
+		const data = await Message.findOneAndUpdate(
+			{ _id: req.body._id },
+			{
+				$set: {
+					status: 'delivered',
+				},
+			},
+			{ returnDocument: 'after' }
+		)
 		res.json({
 			status: 1,
-			data: 'Success',
+			data: data,
 		})
 	} catch (error) {
 		res.status(500).json({
