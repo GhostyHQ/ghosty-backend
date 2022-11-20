@@ -22,4 +22,4 @@ server.get('/', (req, res) => {
 	res.json({ status: 1 })
 })
 
-server.listen(PORT, () => console.log(`server is running on port ${PORT}`))
+server.listen(PORT, () => console.log(`server is running on port => ${PORT}`))
