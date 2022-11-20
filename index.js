@@ -1,5 +1,5 @@
 const express = require('express')
-const dotenv = require('dotenv')
+require('dotenv').config()
 const cors = require('cors')
 
 const databaseConnect = require('./config/database')
@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 9090
 
 const server = express()
 
-dotenv.config({ path: 'config/config.env' })
+databaseConnect()
 
 server.use(cors())
 server.use(express.json())
@@ -21,7 +21,5 @@ server.use('/api', messageRoute)
 server.get('/', (req, res) => {
 	res.json({ status: 1 })
 })
-
-databaseConnect()
 
 server.listen(PORT, () => console.log(`server is running on port ${PORT}`))
